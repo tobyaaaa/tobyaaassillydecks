@@ -1,0 +1,14 @@
+{
+	"id": "tobyaaassillydecks",
+	"name": "tobyaaa's Silly Decks",
+	"display_name": "tobyaaa's decks",
+	"author": ["tobyaaa"],
+	"description": "adds 11 new decks, based loosely off the vanilla ones. Thanks to ABuffZucchini, Bred, Crispybag, and Goose! for helping with deck ideas, and Vitellary for making my code less bad.",
+	"prefix": "tobyaaadecks",
+	"main_file": "main.lua",
+	"priority": -30,
+	"badge_colour": "ff800",
+	"badge_text_colour": "",
+	"version": "1.0.0",
+	"dependencies": []
+}

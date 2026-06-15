@@ -1,0 +1,60 @@
+[manifest]
+version = "1.0.0"
+priority = 0
+
+#if playing evil abandoned deck, prep a list of cards to remove
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "card_protos = {}"
+position = "after"
+payload = '''
+if self.GAME.selected_back.effect.config.evilabandoned then
+    self.GAME.starting_params.evilabandoned_discard = {}
+    local evilabandonedranks = {'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'}
+    local evilabandonedsuits = {'S','D','H','C'}
+    pseudoshuffle(evilabandonedsuits, pseudoseed('evilabandoneddeck'))
+    for i, _r in ipairs(evilabandonedranks) do
+        -- for each rank, assign a suit to be removed, in a randomized order
+        self.GAME.starting_params.evilabandoned_discard[_r] = evilabandonedsuits[(i % 4) + 1]
+    end
+end
+'''
+match_indent = true
+
+#if playing evil abandoned deck, remove prepped rank/suit combinations
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "if self.GAME.starting_params.no_faces and SMODS.Ranks[v.value].face then keep = false end"
+position = "after"
+payload = '''
+if self.GAME.starting_params.evilabandoned_discard and self.GAME.starting_params.evilabandoned_discard[_r] == _s then keep = false end
+'''
+match_indent = true
+
+
+
+
+
+#if using evil checkered deck, add 13 wildcards - one for each rank, random suit
+#if using evil abandoned deck, add one card for every card ranked 7 or above
+#if using evil erratic deck, add the random straight flush
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "self.GAME.starting_deck_size = #G.playing_cards"
+position = "before"
+payload = '''
+if (G.GAME.selected_back.effect.config.checkerdeckwilds) then
+    evilcheckerranks = {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'}
+    for i = 1, 13 do
+        echeckrank = evilcheckerranks[i]
+        echecksuit = pseudorandom_element({'S','H','D','C'}, pseudoseed('evilcheckerdeck'))
+        echeckcard = {s = echecksuit, r = echeckrank, e="m_wild", g = nil}
+        card_from_control(echeckcard)
+    end
+end
+'''
+match_indent = true
+

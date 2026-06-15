@@ -1,0 +1,19 @@
+[manifest]
+version = "1.0.0"
+priority = 0
+
+
+#during cursed,
+#set joker rate to 0, spectral rate to normal joker rate
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "elseif v.id == 'no_shop_jokers' then"
+position = "before"
+payload = '''
+                        elseif v.id == 'tobyaaasdecks_shop_spectrals' then 
+                            self.GAME.joker_rate = 0
+                            self.GAME.spectral_rate = 20
+'''
+match_indent = true
+
